@@ -25,6 +25,7 @@ brew "stow"
 brew "tmux"
 brew "tree"
 brew "uv"
+brew "wireshark", link: false
 brew "zplug"
 brew "zsh-syntax-highlighting"
 brew "jandedobbeleer/oh-my-posh/oh-my-posh"
