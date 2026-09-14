@@ -1,5 +1,6 @@
 tap "jandedobbeleer/oh-my-posh"
 tap "nikitabobko/tap"
+tap "oven-sh/bun"
 # Cryptography and SSL/TLS Toolkit
 brew "openssl@3"
 # Display directories as trees (with optional color/HTML output)
@@ -62,6 +63,8 @@ brew "wireshark", link: false
 brew "zplug"
 # Fish shell like syntax highlighting for zsh
 brew "zsh-syntax-highlighting"
+# Incredibly fast JavaScript runtime, bundler, transpiler and package manager - all in one.
+brew "oven-sh/bun/bun", trusted: true
 cask "aerospace"
 # Chromium based browser
 cask "arc"
@@ -91,6 +94,8 @@ cask "maccy"
 cask "multipass"
 # App to write, plan, collaborate, and get organised
 cask "notion"
+# AI coding agent desktop client
+cask "opencode-desktop"
 # Collaboration platform for API development
 cask "postman"
 # Screenshot measurement and annotation tool
