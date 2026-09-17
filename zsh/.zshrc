@@ -5,7 +5,7 @@
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # LM Studio CLI
-export PATH="$PATH:/Users/elvinsalcedo/.lmstudio/bin"
+export PATH="$PATH:$HOME/.lmstudio/bin"
 
 # Local bin (if it exists)
 [ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"
@@ -54,6 +54,6 @@ export PATH="$HOME/.local/bin:$PATH"
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # opencode
-export PATH=/Users/elvinsalcedo/.opencode/bin:$PATH
+export PATH="$HOME/.opencode/bin:$PATH"
 
 export EDITOR="nvim"

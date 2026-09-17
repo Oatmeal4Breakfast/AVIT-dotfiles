@@ -13,4 +13,4 @@ Personal configuration files for macOS development environment.
 ## Quick Install
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/botbeans/dotfiles/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Oatmeal4Breakfast/AVIT-dotfiles/main/install_script.sh | bash

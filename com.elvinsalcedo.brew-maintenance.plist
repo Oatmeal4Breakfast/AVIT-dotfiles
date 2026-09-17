@@ -8,7 +8,7 @@
     <key>ProgramArguments</key>
     <array>
         <string>/bin/zsh</string>
-        <string>/Users/elvinsalcedo/dotfiles/brew-maintenance.sh</string>
+        <string>__HOME__/dotfiles/brew-maintenance.sh</string>
     </array>
 
     <key>StartCalendarInterval</key>
@@ -22,17 +22,17 @@
     </dict>
 
     <key>StandardOutPath</key>
-    <string>/Users/elvinsalcedo/Library/Logs/brew-maintenance.log</string>
+    <string>__HOME__/Library/Logs/brew-maintenance.log</string>
 
     <key>StandardErrorPath</key>
-    <string>/Users/elvinsalcedo/Library/Logs/brew-maintenance.log</string>
+    <string>__HOME__/Library/Logs/brew-maintenance.log</string>
 
     <key>EnvironmentVariables</key>
     <dict>
         <key>PATH</key>
         <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
         <key>HOME</key>
-        <string>/Users/elvinsalcedo</string>
+        <string>__HOME__</string>
     </dict>
 </dict>
 </plist>

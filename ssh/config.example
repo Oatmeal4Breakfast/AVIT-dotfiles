@@ -1,0 +1,17 @@
+# SSH config template — copy to `config` and fill in real values.
+#   cp ssh/config.example ssh/config && chmod 600 ssh/config
+# The real `ssh/config` is gitignored and never committed.
+
+# Optional shared include (uncomment and adjust):
+# Include ~/.ssh/config.local
+
+Host example-server
+  HostName 192.0.2.10
+  User your-user
+
+Host github.com
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/github_key
+  AddKeysToAgent yes
+  UseKeychain yes

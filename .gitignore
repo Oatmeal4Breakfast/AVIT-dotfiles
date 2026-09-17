@@ -1,3 +1,31 @@
+# Local machine state (never commit)
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# Neovim lazy lockfile (machine-generated)
 nvim/lazy-lock.json
-ssh/
-.harlequin.toml
+
+# SSH: ignore the real config, track only config.example
+ssh/config
+ssh/*.local
+ssh/known_hosts*
+
+# Secrets / credentials
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+*token*
+credentials*.json
+
+# Logs / temp
+*.log
+logs/
+*.tmp
+*.temp

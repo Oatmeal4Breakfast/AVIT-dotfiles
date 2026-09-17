@@ -6,6 +6,15 @@
       "*.env": "deny",
       "*.env.*": "deny",
       "*.env.example": "allow",
-    },
-  },
+      "*.pem": "deny",
+      "*.key": "deny",
+      "*.p12": "deny",
+      "*.pfx": "deny",
+      "**/id_rsa*": "deny",
+      "**/id_ed25519*": "deny",
+      "**/credentials*.json": "deny",
+      "**/*token*": "deny",
+      "**/ssh/config": "deny"
+    }
+  }
 }

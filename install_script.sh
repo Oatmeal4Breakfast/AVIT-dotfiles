@@ -1,6 +1,6 @@
 #!/bin/bash
 # Dotfiles Installation Script
-# Usage: curl -fsSL https://raw.githubusercontent.com/yourusername/dotfiles/main/install.sh | bash
+# Usage: curl -fsSL https://raw.githubusercontent.com/Oatmeal4Breakfast/AVIT-dotfiles/main/install_script.sh | bash
 
 set -e
 
@@ -33,7 +33,7 @@ fi
 # Clone dotfiles repo if not exists
 if [ ! -d "$DOTFILES_DIR" ]; then
   echo -e "${YELLOW}Cloning dotfiles repository...${NC}"
-  git clone https://github.com/botbeans/dotfiles.git "$DOTFILES_DIR"
+  git clone https://github.com/Oatmeal4Breakfast/AVIT-dotfiles.git "$DOTFILES_DIR"
 else
   echo -e "${GREEN}✓ Dotfiles directory exists${NC}"
   cd "$DOTFILES_DIR"
@@ -89,8 +89,15 @@ echo -e "${YELLOW}Creating symlinks...${NC}"
 create_symlink "zsh/.zshrc" "$HOME/.zshrc"
 create_symlink "tmux/.tmux.conf" "$HOME/.tmux.conf"
 create_symlink "ghostty/config" "$HOME/.config/ghostty/config"
-create_symlink "starship/starship.toml" "$HOME/.config/starship.toml"
 create_symlink "nvim" "$HOME/.config/nvim"
+create_symlink "opencode/.config/opencode" "$HOME/.config/opencode"
+
+# Install brew-maintenance LaunchAgent (expands __HOME__ placeholder)
+if [ -f "$DOTFILES_DIR/com.elvinsalcedo.brew-maintenance.plist" ]; then
+  echo -e "${YELLOW}Installing brew-maintenance LaunchAgent...${NC}"
+  sed "s|__HOME__|$HOME|g" "$DOTFILES_DIR/com.elvinsalcedo.brew-maintenance.plist" > "$HOME/Library/LaunchAgents/com.elvinsalcedo.brew-maintenance.plist"
+  echo -e "${GREEN}✓ LaunchAgent installed (edit schedule in ~/Library/LaunchAgents/com.elvinsalcedo.brew-maintenance.plist)${NC}"
+fi
 
 # Install fzf key bindings
 echo -e "${YELLOW}Setting up fzf...${NC}"
