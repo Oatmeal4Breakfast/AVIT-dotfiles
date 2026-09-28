@@ -91,6 +91,8 @@ create_symlink "tmux/.tmux.conf" "$HOME/.tmux.conf"
 create_symlink "ghostty/config" "$HOME/.config/ghostty/config"
 create_symlink "nvim" "$HOME/.config/nvim"
 create_symlink "opencode/.config/opencode" "$HOME/.config/opencode"
+create_symlink "git/.gitconfig" "$HOME/.gitconfig"
+create_symlink "ssh/allowed_signers" "$HOME/.ssh/allowed_signers"
 
 # Install brew-maintenance LaunchAgent (expands __HOME__ placeholder)
 if [ -f "$DOTFILES_DIR/com.elvinsalcedo.brew-maintenance.plist" ]; then

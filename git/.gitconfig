@@ -1,0 +1,19 @@
+[user]
+  name = Oatmeal4Breakfast
+  email = elvin.salcedo17@gmail.com
+  signingkey = ~/.ssh/github_key.pub
+
+[init]
+  defaultBranch = main
+
+[gpg]
+  format = ssh
+
+[commit]
+  gpgsign = true
+
+[tag]
+  gpgsign = true
+
+[gpg "ssh"]
+  allowedSignersFile = ~/.ssh/allowed_signers

@@ -1,0 +1,4 @@
+# SSH allowed signers for git commit/tag verification (public keys only — safe to commit).
+# Format: <principal> <keytype> <base64-key>
+# Regenerate with: (cut -d' ' -f1,2 ~/.ssh/github_key.pub | sed "s/^/$(git config user.email) /") > ssh/allowed_signers
+elvin.salcedo17@gmail.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBrtlWhDf5/GLv3vHgB5PldMdW/mWJHx+dAhvmMj1Lqw
