@@ -9,8 +9,10 @@ Personal configuration files for macOS development environment.
 - **Ghostty** - Fast, modern terminal emulator
 - **Neovim** - LazyVim configuration
 - **Starship** - Cross-shell prompt
+- **aerospace** - i3 style window manager
 
 ## Quick Install
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Oatmeal4Breakfast/AVIT-dotfiles/main/install_script.sh | bash
+```
