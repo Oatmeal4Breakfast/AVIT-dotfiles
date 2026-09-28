@@ -25,6 +25,8 @@ brew "fzf"
 brew "gh"
 # Distributed revision control system
 brew "git"
+# Syntax-highlighting pager for git (delta)
+brew "git-delta"
 # Tools and libraries to manipulate images in select formats
 brew "imagemagick"
 # Lightweight and flexible command-line JSON processor
