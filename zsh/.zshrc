@@ -49,4 +49,6 @@ source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # opencode
 export PATH="$HOME/.opencode/bin:$PATH"
 
+# Editor
 export EDITOR="nvim"
+
