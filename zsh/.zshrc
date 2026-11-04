@@ -52,3 +52,7 @@ export PATH="$HOME/.opencode/bin:$PATH"
 # Editor
 export EDITOR="nvim"
 
+
+# Homebrew version of curl
+export PATH="/opt/homebrew/opt/curl/bin:$PATH"
+
