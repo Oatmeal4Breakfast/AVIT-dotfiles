@@ -7,6 +7,7 @@ Personal configuration files for macOS development environment.
 - **Zsh** - Shell configuration with Starship prompt
 - **Tmux** - Terminal multiplexer for session management
 - **Ghostty** - Fast, modern terminal emulator
+- **Rex** - Terminal multiplexer configuration
 - **Neovim** - LazyVim configuration
 - **Starship** - Cross-shell prompt
 - **aerospace** - i3 style window manager

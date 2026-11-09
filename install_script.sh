@@ -55,7 +55,8 @@ brew install \
   eza \
   ripgrep \
   fd \
-  jq
+  jq \
+  stow
 
 # Install Ghostty (if not installed)
 if [ ! -d "/Applications/Ghostty.app" ]; then
@@ -94,6 +95,10 @@ create_symlink "nvim" "$HOME/.config/nvim"
 create_symlink "opencode/.config/opencode" "$HOME/.config/opencode"
 create_symlink "git/.gitconfig" "$HOME/.gitconfig"
 create_symlink "ssh/allowed_signers" "$HOME/.ssh/allowed_signers"
+
+# Link Rex config with GNU Stow
+echo -e "${YELLOW}Stowing Rex config...${NC}"
+stow -v -R -t "$HOME" rex
 
 # Install brew-maintenance LaunchAgent (expands __HOME__ placeholder)
 if [ -f "$DOTFILES_DIR/com.elvinsalcedo.brew-maintenance.plist" ]; then
