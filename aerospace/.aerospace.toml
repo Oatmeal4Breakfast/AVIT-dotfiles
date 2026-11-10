@@ -87,10 +87,10 @@ outer.left = 5
 # '''
 
 # App shortcuts
-alt-w = 'exec-and-forget open -a /Applications/Microsoft Edge.app'
-alt-enter = 'exec-and-forget open -a /Applications/Rex Beta.app/'
+alt-w = 'exec-and-forget open -b com.microsoft.edgemac'
+alt-enter = 'exec-and-forget open -b com.superlogical.rex'
 alt-n = 'exec-and-forget open -a /Applications/Notion.app'
-alt-m = 'exec-and-forget open -a /Applications/Microsoft Teams.app'
+alt-m = 'exec-and-forget open -b com.microsoft.teams2'
 
 # See: https://nikitabobko.github.ioeAeroSpace/commands#layout
 alt-e = 'layout tiles horizontal vertical'
@@ -170,7 +170,7 @@ if.app-id = 'com.microsoft.edgemac'
 run = ['move-node-to-workspace 1']
 
 [[on-window-detected]]
-if.app-id = 'com.mitchellh.ghostty'
+if.app-id = 'com.superlogical.rex'
 run = ['move-node-to-workspace 2']
 
 [[on-window-detected]]
