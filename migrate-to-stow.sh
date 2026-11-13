@@ -1,12 +1,11 @@
 #!/bin/bash
-# migrate-to-stow.sh - one-time cleanup for links made by the old installer.
+# migrate-to-stow.sh - prepare a machine for the stow-based install.
 #
-# The previous install script created absolute symlinks (and occasionally a
-# relative one) plus a couple of whole-directory symlinks. GNU Stow refuses
-# to adopt links it did not create, so they have to be removed before the
-# new installer can run.
+# Removes absolute symlinks and whole-directory symlinks left by the old
+# installer (GNU Stow refuses to adopt those) and moves aside real files such
+# as a ~/.gitconfig that would stop stow from linking.
 #
-# Dry-run by default. Nothing is removed until --apply is passed.
+# Dry-run by default. Nothing changes until --apply is passed.
 #
 # Usage: ./migrate-to-stow.sh [--apply] [--prune-backups] [--dotfiles DIR]
 
@@ -28,9 +27,10 @@ usage() {
   cat <<'EOF'
 Usage: migrate-to-stow.sh [options]
 
-Remove symlinks created by the pre-stow install script so GNU Stow can own
-the config paths. Dry-run by default; nothing is removed until --apply.
-Safe to run again: links stow already owns are left alone.
+Remove symlinks created by the pre-stow install script and move aside real
+files that would stop stow, so GNU Stow can own the config paths.
+Dry-run by default; nothing changes until --apply. Safe to run again: links
+stow already owns are left alone.
 
 Options:
   --apply          actually remove the legacy links
@@ -100,6 +100,19 @@ LEGACY_LINKS=(
   "$HOME/.config/rex"
   "$HOME/.ssh/allowed_signers"
   "$HOME/.ssh/config"
+)
+
+# Real files that would make stow refuse to link (for example a ~/.gitconfig
+# created by `git config --global`). These get moved to *.backup.TIMESTAMP.
+CONFLICT_PATHS=(
+  "$HOME/.zshrc"
+  "$HOME/.tmux.conf"
+  "$HOME/.gitconfig"
+  "$HOME/.aerospace.toml"
+  "$HOME/.config/starship.toml"
+  "$HOME/.config/ghostty/config"
+  "$HOME/.ssh/config"
+  "$HOME/.ssh/allowed_signers"
 )
 
 # True when a symlink (valid or dangling) points somewhere inside the repo.
@@ -194,7 +207,41 @@ for link in "${LEGACY_LINKS[@]}"; do
   fi
 done
 
-backups=0
+backed_up=0
+echo
+echo "== Files stow cannot adopt"
+for target in "${CONFLICT_PATHS[@]}"; do
+  if [ ! -e "$target" ] || [ -L "$target" ]; then
+    continue
+  fi
+
+  if [ "$APPLY" -eq 1 ]; then
+    if mv "$target" "$target.backup.$(date +%Y%m%d_%H%M%S)"; then
+      echo -e "${GREEN}BACKED UP${NC} $(show_path "$target")"
+      backed_up=$((backed_up + 1))
+    fi
+  else
+    echo "WOULD BACK UP  $(show_path "$target")"
+    backed_up=$((backed_up + 1))
+  fi
+done
+
+# A real Neovim config dir would be merged into; move it aside. A dir holding
+# only symlinks is already stow-managed, so it is left alone.
+if [ -d "$HOME/.config/nvim" ] && [ ! -L "$HOME/.config/nvim" ] &&
+  [ -n "$(find "$HOME/.config/nvim" -mindepth 1 -maxdepth 1 ! -type l 2>/dev/null)" ]; then
+  if [ "$APPLY" -eq 1 ]; then
+    if mv "$HOME/.config/nvim" "$HOME/.config/nvim.backup.$(date +%Y%m%d_%H%M%S)"; then
+      echo -e "${GREEN}BACKED UP${NC} $(show_path "$HOME/.config/nvim")"
+      backed_up=$((backed_up + 1))
+    fi
+  else
+    echo "WOULD BACK UP  $(show_path "$HOME/.config/nvim")"
+    backed_up=$((backed_up + 1))
+  fi
+fi
+
+pruned=0
 if [ "$PRUNE_BACKUPS" -eq 1 ]; then
   echo
   echo "== Stale backup links"
@@ -207,11 +254,11 @@ if [ "$PRUNE_BACKUPS" -eq 1 ]; then
     if [ "$APPLY" -eq 1 ]; then
       if rm "$link"; then
         echo -e "${GREEN}REMOVED${NC} $(show_path "$link")"
-        backups=$((backups + 1))
+        pruned=$((pruned + 1))
       fi
     else
       echo "WOULD REMOVE  $(show_path "$link") -> $(readlink "$link")"
-      backups=$((backups + 1))
+      pruned=$((pruned + 1))
     fi
   done < <(find "$HOME" -maxdepth 2 -name '*.backup.*' -type l -not -path "$REPO_REAL/*" 2>/dev/null)
 fi
@@ -219,18 +266,19 @@ fi
 echo
 echo "== Summary"
 echo "  links:   $removed"
-echo "  backups: $backups"
+echo "  files:   $backed_up"
+echo "  pruned:  $pruned"
 echo "  skipped: $skipped (left untouched)"
 
-if [ "$removed" -eq 0 ] && [ "$backups" -eq 0 ]; then
+if [ "$removed" -eq 0 ] && [ "$backed_up" -eq 0 ] && [ "$pruned" -eq 0 ]; then
   echo
-  echo -e "${GREEN}Nothing to clean up.${NC} This machine already uses stow, or has no legacy links."
+  echo -e "${GREEN}Nothing to do.${NC} This machine already uses stow, or has no conflicting paths."
   exit 0
 fi
 
 if [ "$APPLY" -eq 0 ]; then
   echo
-  echo -e "${YELLOW}Dry run: nothing changed.${NC} Re-run with --apply to remove these links."
+  echo -e "${YELLOW}Dry run: nothing changed.${NC} Re-run with --apply to make these changes."
   exit 0
 fi
 

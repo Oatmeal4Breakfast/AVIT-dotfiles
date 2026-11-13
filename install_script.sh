@@ -67,36 +67,9 @@ if [ ! -d "/Applications/Rex Beta.app" ]; then
   echo -e "${YELLOW}Note: Install Rex manually from https://superlogical.com${NC}"
 fi
 
-# Prepare targets and back up real files that would block stow. Legacy
-# symlinks from the old installer are handled by migrate-to-stow.sh, which is
-# only needed on machines set up before this script used stow.
-echo -e "${YELLOW}Preparing config targets...${NC}"
+# stow needs a real ~/.ssh with tight permissions, not a folded directory.
 mkdir -p "$HOME/.ssh"
 chmod 700 "$HOME/.ssh"
-
-for target in \
-  "$HOME/.zshrc" \
-  "$HOME/.tmux.conf" \
-  "$HOME/.gitconfig" \
-  "$HOME/.aerospace.toml" \
-  "$HOME/.config/starship.toml" \
-  "$HOME/.config/ghostty/config" \
-  "$HOME/.ssh/config" \
-  "$HOME/.ssh/allowed_signers"; do
-  if [ -e "$target" ] && [ ! -L "$target" ]; then
-    echo -e "${YELLOW}Backing up existing $target${NC}"
-    mv "$target" "$target.backup.$(date +%Y%m%d_%H%M%S)"
-  fi
-done
-
-# A pre-existing real Neovim config would be merged into, so move it aside.
-# Directories that already contain only stow links are left alone, so re-running
-# the installer is a no-op.
-if [ -d "$HOME/.config/nvim" ] && [ ! -L "$HOME/.config/nvim" ] &&
-  [ -n "$(find "$HOME/.config/nvim" -mindepth 1 -maxdepth 1 ! -type l 2>/dev/null)" ]; then
-  echo -e "${YELLOW}Backing up existing $HOME/.config/nvim${NC}"
-  mv "$HOME/.config/nvim" "$HOME/.config/nvim.backup.$(date +%Y%m%d_%H%M%S)"
-fi
 
 # Every package mirrors $HOME, so a single target is enough. Folding is fine
 # for read-only config dirs; --no-folding is kept for the packages whose apps
@@ -104,11 +77,13 @@ fi
 echo -e "${YELLOW}Stowing configs...${NC}"
 if ! stow --target "$HOME" -R --ignore='\.DS_Store' \
   zsh tmux git aerospace starship ghostty nvim ssh; then
-  echo -e "${YELLOW}WARNING: stow reported conflicts. On a machine set up before stow, run ./migrate-to-stow.sh --apply first.${NC}"
+  echo -e "${YELLOW}WARNING: stow found existing files or links it cannot adopt.${NC}"
+  echo -e "${YELLOW}Run ./migrate-to-stow.sh to see what is in the way.${NC}"
 fi
 
 if ! stow --target "$HOME" -R --no-folding --ignore='\.DS_Store' opencode rex; then
-  echo -e "${YELLOW}WARNING: stow reported conflicts for opencode/rex. Run ./migrate-to-stow.sh --apply if this is an existing machine.${NC}"
+  echo -e "${YELLOW}WARNING: stow found existing files or links it cannot adopt.${NC}"
+  echo -e "${YELLOW}Run ./migrate-to-stow.sh to see what is in the way.${NC}"
 fi
 
 # Install brew-maintenance LaunchAgent (expands __HOME__ placeholder)
