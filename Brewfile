@@ -86,6 +86,8 @@ cask "dbeaver-community"
 cask "discord"
 # Web browser
 cask "firefox"
+# Developer font with programming ligatures
+cask "font-jetbrains-mono"
 # Terminal emulator that uses platform-native UI and GPU acceleration
 cask "ghostty"
 # Utility to hide menu bar items
