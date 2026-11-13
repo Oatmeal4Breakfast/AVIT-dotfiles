@@ -1,0 +1,24 @@
+# Stow's built-in defaults plus this package's docs.
+#
+# A package-local ignore list REPLACES the global/built-in list, so the
+# defaults have to be repeated here.
+RCS
+.+,v
+CVS
+\.\#.+
+\.cvsignore
+\.svn
+_darcs
+\.hg
+\.git
+\.gitignore
+\.gitmodules
+.+~
+\#.*\#
+^/README.*
+^/LICENSE.*
+^/COPYING
+\.DS_Store
+
+# Package-specific: keep the reference doc out of $HOME.
+KEYBINDS.md

@@ -5,12 +5,12 @@
 Thumbs.db
 
 # Neovim lazy lockfile (machine-generated)
-nvim/lazy-lock.json
+nvim/.config/nvim/lazy-lock.json
 
 # SSH: ignore the real config, track only config.example
-ssh/config
-ssh/*.local
-ssh/known_hosts*
+ssh/.ssh/config
+ssh/.ssh/*.local
+ssh/.ssh/known_hosts*
 
 # Secrets / credentials
 .env

@@ -67,82 +67,49 @@ if [ ! -d "/Applications/Rex Beta.app" ]; then
   echo -e "${YELLOW}Note: Install Rex manually from https://superlogical.com${NC}"
 fi
 
-# Remove symlinks created by the old install script so stow can own them.
-# Only symlinks pointing into this repo are touched; real files are left alone.
-echo -e "${YELLOW}Cleaning up old symlinks...${NC}"
-for link in \
+# Prepare targets and back up real files that would block stow. Legacy
+# symlinks from the old installer are handled by migrate-to-stow.sh, which is
+# only needed on machines set up before this script used stow.
+echo -e "${YELLOW}Preparing config targets...${NC}"
+mkdir -p "$HOME/.ssh"
+chmod 700 "$HOME/.ssh"
+
+for target in \
   "$HOME/.zshrc" \
   "$HOME/.tmux.conf" \
   "$HOME/.gitconfig" \
   "$HOME/.aerospace.toml" \
-  "$HOME/.config/ghostty/config" \
   "$HOME/.config/starship.toml" \
-  "$HOME/.ssh/allowed_signers" \
-  "$HOME/.ssh/config"; do
-  if [ -L "$link" ]; then
-    # Resolve first: the old script wrote both absolute and relative links.
-    resolved="$(realpath "$link" 2>/dev/null || true)"
-    case "$resolved" in
-      "$(realpath "$DOTFILES_DIR")" | "$(realpath "$DOTFILES_DIR")"/*) rm "$link" ;;
-    esac
+  "$HOME/.config/ghostty/config" \
+  "$HOME/.ssh/config" \
+  "$HOME/.ssh/allowed_signers"; do
+  if [ -e "$target" ] && [ ! -L "$target" ]; then
+    echo -e "${YELLOW}Backing up existing $target${NC}"
+    mv "$target" "$target.backup.$(date +%Y%m%d_%H%M%S)"
   fi
 done
-
-# The old script linked the whole nvim directory and the ghostty config file.
-# Stow needs real directories for these targets.
-for dir in "$HOME/.config/ghostty" "$HOME/.config/nvim"; do
-  if [ -L "$dir" ]; then
-    rm "$dir"
-  fi
-done
-
-# Back up real files that would block stow, matching the old script's safety
-# net. Symlinks were already removed above, and missing paths are left alone.
-backup_conflicts() {
-  for target in "$@"; do
-    if [ -e "$target" ] && [ ! -L "$target" ]; then
-      echo -e "${YELLOW}Backing up existing $target${NC}"
-      mv "$target" "$target.backup.$(date +%Y%m%d_%H%M%S)"
-    fi
-  done
-}
-
-backup_conflicts \
-  "$HOME/.zshrc" \
-  "$HOME/.tmux.conf" \
-  "$HOME/.gitconfig" \
-  "$HOME/.aerospace.toml" \
-  "$HOME/.config/ghostty/config" \
-  "$HOME/.config/starship.toml" \
-  "$HOME/.ssh/allowed_signers" \
-  "$HOME/.ssh/config"
 
 # A pre-existing real Neovim config would be merged into, so move it aside.
-if [ -d "$HOME/.config/nvim" ] && [ ! -L "$HOME/.config/nvim" ] && [ -n "$(ls -A "$HOME/.config/nvim")" ]; then
+# Directories that already contain only stow links are left alone, so re-running
+# the installer is a no-op.
+if [ -d "$HOME/.config/nvim" ] && [ ! -L "$HOME/.config/nvim" ] &&
+  [ -n "$(find "$HOME/.config/nvim" -mindepth 1 -maxdepth 1 ! -type l 2>/dev/null)" ]; then
   echo -e "${YELLOW}Backing up existing $HOME/.config/nvim${NC}"
   mv "$HOME/.config/nvim" "$HOME/.config/nvim.backup.$(date +%Y%m%d_%H%M%S)"
 fi
 
-mkdir -p "$HOME/.config/ghostty" "$HOME/.config/nvim" "$HOME/.ssh"
-chmod 700 "$HOME/.ssh"
-
-# Stow configs. --no-folding keeps runtime files (OpenCode node_modules, Rex
-# state, etc.) in ~/.config instead of writing them into the dotfiles repo.
+# Every package mirrors $HOME, so a single target is enough. Folding is fine
+# for read-only config dirs; --no-folding is kept for the packages whose apps
+# write runtime files (node_modules, state) into ~/.config.
 echo -e "${YELLOW}Stowing configs...${NC}"
-stow_pkg() {
-  local target="$1"
-  shift
-  if ! stow --no-folding -R -t "$target" "$@"; then
-    echo -e "${YELLOW}WARNING: stow failed for $* into $target${NC}"
-  fi
-}
+if ! stow --target "$HOME" -R --ignore='\.DS_Store' \
+  zsh tmux git aerospace starship ghostty nvim ssh; then
+  echo -e "${YELLOW}WARNING: stow reported conflicts. On a machine set up before stow, run ./migrate-to-stow.sh --apply first.${NC}"
+fi
 
-stow_pkg "$HOME" zsh tmux git aerospace
-stow_pkg "$HOME/.config/ghostty" ghostty
-stow_pkg "$HOME/.config/nvim" nvim
-stow_pkg "$HOME/.config" starship
-stow_pkg "$HOME/.ssh" ssh
-stow_pkg "$HOME" rex opencode
+if ! stow --target "$HOME" -R --no-folding --ignore='\.DS_Store' opencode rex; then
+  echo -e "${YELLOW}WARNING: stow reported conflicts for opencode/rex. Run ./migrate-to-stow.sh --apply if this is an existing machine.${NC}"
+fi
 
 # Install brew-maintenance LaunchAgent (expands __HOME__ placeholder)
 AGENT="$HOME/Library/LaunchAgents/com.elvinsalcedo.brew-maintenance.plist"
